@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-author 'JGR'
-description 'JGR_Dealership - Advanced Futuristic iOS 26 Dealership'
+author 'JGR Studio'
+description 'JGR_Dealership'
 version '1.0.0'
 
 shared_scripts {
@@ -26,6 +26,10 @@ files {
     'html/style.css',
     'html/script.js',
     'html/assets/*'
+}
+
+escrow_ignore {
+    'config.lua',
 }
 
 lua54 'yes'
