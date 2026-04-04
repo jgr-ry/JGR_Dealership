@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JGR Dealership | Premium Motors</title>
+    <!-- Modern Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Notification System -->
+    <div id="dynamic-island" class="dynamic-island hidden">
+        <div class="di-content">
+            <i id="di-icon" class="fas fa-bell"></i>
+            <span id="di-text">Notificación</span>
+        </div>
+    </div>
+
+    <!-- Main Dealership UI -->
+    <main id="dealership-ui" class="overlay hidden">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass">
+            <div class="brand">
+                <div class="logo-box">
+                    <i class="fas fa-car-side"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>JGR MOTORS</h1>
+                    <p>PREMIUM DEALER</p>
+                </div>
+            </div>
+
+            <nav class="categories">
+                <div class="nav-label">Categorías</div>
+                <ul id="categories-list">
+                    <li class="active" data-cat="all">
+                        <i class="fas fa-th-large"></i> <span>Todos</span>
+                    </li>
+                    <li data-cat="compactos">
+                        <i class="fas fa-cubes"></i> <span>Compactos</span>
+                    </li>
+                    <li data-cat="sedanes">
+                        <i class="fas fa-car"></i> <span>Sedanes</span>
+                    </li>
+                    <li data-cat="suvs">
+                        <i class="fas fa-truck-pickup"></i> <span>SUVs</span>
+                    </li>
+                    <li data-cat="coupes">
+                        <i class="fas fa-car-side"></i> <span>Coupés</span>
+                    </li>
+                    <li data-cat="electricos">
+                        <i class="fas fa-charging-station"></i> <span>Eléctricos</span>
+                    </li>
+                    <li data-cat="musclecars">
+                        <i class="fas fa-fire"></i> <span>Muscle cars</span>
+                    </li>
+                    <li data-cat="deportivos_clasicos">
+                        <i class="fas fa-flag-checkered"></i> <span>Deportivos clásicos</span>
+                    </li>
+                    <li data-cat="deportivos">
+                        <i class="fas fa-tachometer-alt"></i> <span>Deportivos</span>
+                    </li>
+                    <li data-cat="superdeportivos">
+                        <i class="fas fa-bolt"></i> <span>Superdeportivos</span>
+                    </li>
+                    <li data-cat="motos">
+                        <i class="fas fa-motorcycle"></i> <span>Motos</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <footer class="sidebar-footer">
+                <button class="close-btn" onclick="Utils.closeUI()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Salir</span>
+                </button>
+            </footer>
+        </aside>
+
+        <!-- Main Display Content -->
+        <section class="main-content">
+
+            <!-- Catalog View -->
+            <div id="catalog-view" class="view-panel">
+                <header class="content-header">
+                    <div class="header-info">
+                        <h2 id="current-cat-name">Catálogo Completo</h2>
+                        <p id="total-vehicles">Mostrando los modelos más exclusivos</p>
+                    </div>
+                </header>
+
+                <div class="grid-container">
+                    <div id="vehicles-container" class="vehicle-grid">
+                        <!-- Cards injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview View (Selected Vehicle) -->
+            <div id="preview-panel" class="view-panel hidden">
+                <div class="preview-layout">
+
+                    <div class="preview-header">
+                        <div class="header-left">
+                            <button class="back-link" onclick="Dealership.backToCatalog()">
+                                <i class="fas fa-chevron-left"></i> Volver al catálogo
+                            </button>
+                            <div class="vehicle-titles">
+                                <h1 id="preview-name">Vehicle Name</h1>
+                                <p class="stock-info">DISPONIBLE EN STOCK</p>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <div class="preview-price">
+                                <span id="preview-price">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicle Stats Section -->
+                    <div class="stats-wrapper">
+                        <div class="vehicle-stats glass">
+                            <div class="stat-item">
+                                <div class="stat-header">
+                                    <span class="stat-label">VELOCIDAD MÁXIMA</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-header">
+                                    <span class="stat-label">ACELERACIÓN</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 92%"></div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-header">
+                                    <span class="stat-label">FRENADO</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 78%"></div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-header">
+                                    <span class="stat-label">MANEJO</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuration & Actions -->
+                    <div class="action-footer">
+                        <div class="footer-group glass">
+                            <div class="config-section">
+                                <div class="config-label">PERSONALIZACIÓN</div>
+                                <div class="color-picker" id="color-picker-container">
+                                    <div class="c-dot" style="background: #ffffff;" onclick="Dealership.changeColor(0)">
+                                    </div>
+                                    <div class="c-dot" style="background: #000000;"
+                                        onclick="Dealership.changeColor(12)"></div>
+                                    <div class="c-dot" style="background: #ff3b30;"
+                                        onclick="Dealership.changeColor(27)"></div>
+                                    <div class="c-dot" style="background: #007aff;"
+                                        onclick="Dealership.changeColor(64)"></div>
+                                    <div class="c-dot" style="background: #ffcc00;"
+                                        onclick="Dealership.changeColor(88)"></div>
+                                    <div class="c-dot" style="background: #8e8e93;"
+                                        onclick="Dealership.changeColor(13)"></div>
+                                </div>
+                            </div>
+
+                            <div class="v-divider"></div>
+
+                            <div class="camera-controls">
+                                <button class="cam-btn" onmousedown="Dealership.rotate('left')"><i
+                                        class="fas fa-undo"></i></button>
+                                <button class="cam-btn" onmousedown="Dealership.rotate('right')"><i
+                                        class="fas fa-redo"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="buy-section">
+                            <button class="buy-btn" id="main-buy-btn" onclick="Dealership.showPaymentOptions()">
+                                PROCEDER AL PAGO <i class="fas fa-arrow-right"></i>
+                            </button>
+
+                            <div id="payment-options" class="payment-modal hidden">
+                                <h3>MÉTODO DE PAGO</h3>
+                                <div class="payment-grid">
+                                    <button class="pay-opt cash" onclick="Dealership.buyCurrent('cash')">
+                                        <i class="fas fa-wallet"></i>
+                                        <span>EFECTIVO</span>
+                                    </button>
+                                    <button class="pay-opt bank" onclick="Dealership.buyCurrent('bank')">
+                                        <i class="fas fa-university"></i>
+                                        <span>BANCO</span>
+                                    </button>
+                                </div>
+                                <button class="cancel-payment"
+                                    onclick="Dealership.hidePaymentOptions()">CANCELAR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Staff Panel UI (Kept separate/functional) -->
+    <div id="staff-ui" class="staff-overlay hidden">
+        <div class="staff-panel">
+            <div class="staff-header">
+                <div class="staff-brand">
+                    <i class="fas fa-cog"></i>
+                    <span>ADMINISTRACIÓN</span>
+                </div>
+                <button class="close-btn-round" onclick="Utils.closeUI()"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="staff-content">
+                <div class="staff-form">
+                    <h3>GESTIÓN DE VEHÍCULO</h3>
+                    <input type="hidden" id="staff-id" value="">
+
+                    <div class="input-group">
+                        <label>Modelo (Spawn Code)</label>
+                        <input type="text" id="staff-model" placeholder="ej. t20">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Nombre Comercial</label>
+                        <input type="text" id="staff-name" placeholder="ej. Progen T20">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Precio Unitario ($)</label>
+                        <input type="number" id="staff-price" placeholder="ej. 2200000">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Categoría</label>
+                        <select id="staff-category">
+                            <option value="compactos">Compactos</option>
+                            <option value="sedanes">Sedanes</option>
+                            <option value="suvs">SUVs</option>
+                            <option value="coupes">Coupés</option>
+                            <option value="electricos">Eléctricos</option>
+                            <option value="musclecars">Muscle cars</option>
+                            <option value="deportivos_clasicos">Deportivos clásicos</option>
+                            <option value="deportivos">Deportivos</option>
+                            <option value="superdeportivos">Superdeportivos</option>
+                            <option value="motos">Motos</option>
+                        </select>
+                    </div>
+
+                    <div class="staff-actions">
+                        <button class="btn-primary" onclick="Staff.save()"><i class="fas fa-save"></i> GUARDAR</button>
+                        <button class="btn-secondary" onclick="Staff.clearForm()"><i class="fas fa-trash-alt"></i>
+                            LIMPIAR</button>
+                    </div>
+                </div>
+
+                <div class="staff-list-container">
+                    <h3>LISTA DE VEHÍCULOS</h3>
+                    <div id="staff-vehicles-list" class="staff-list">
+                        <!-- Rows injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmación NUI (nunca usar window.confirm en FiveM: rompe el foco del ratón) -->
+        <div id="staff-delete-modal" class="staff-modal-overlay hidden" role="dialog" aria-modal="true">
+            <div class="staff-modal-box">
+                <h4>Eliminar vehículo</h4>
+                <p id="staff-delete-label">¿Eliminar este vehículo del catálogo?</p>
+                <div class="staff-modal-actions">
+                    <button type="button" class="btn-secondary" id="staff-delete-cancel">Cancelar</button>
+                    <button type="button" class="btn-danger-fill" id="staff-delete-confirm">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+
+</html>
