@@ -50,9 +50,15 @@ end, 'admin')
 -- Staff Actions
 RegisterNetEvent('jgr_dealership:server:AddVehicle', function(data)
     local src = source
+    if type(data) ~= 'table' then return end
     if QBCore.Functions.HasPermission(src, 'admin') then
+        local model = tostring(data.model or '')
+        local name = tostring(data.name or '')
+        local category = tostring(data.category or '')
+        local price = tonumber(data.price) or 0
+        if model == '' or name == '' or category == '' or price <= 0 then return end
         MySQL.Async.insert('INSERT INTO jgr_dealership_vehicles (model, name, price, category) VALUES (?, ?, ?, ?)', {
-            data.model, data.name, data.price, data.category
+            model, name, price, category
         }, function(id)
             TriggerClientEvent('QBCore:Notify', src, 'Vehículo añadido correctamente', 'success')
             TriggerClientEvent('jgr_dealership:client:RefreshVehicles', -1)
@@ -62,9 +68,15 @@ end)
 
 RegisterNetEvent('jgr_dealership:server:EditVehicle', function(data)
     local src = source
+    if type(data) ~= 'table' then return end
     if QBCore.Functions.HasPermission(src, 'admin') then
+        local id = tonumber(data.id)
+        local name = tostring(data.name or '')
+        local category = tostring(data.category or '')
+        local price = tonumber(data.price) or 0
+        if not id or name == '' or category == '' or price <= 0 then return end
         MySQL.Async.execute('UPDATE jgr_dealership_vehicles SET name = ?, price = ?, category = ? WHERE id = ?', {
-            data.name, data.price, data.category, data.id
+            name, price, category, id
         }, function(affectedRows)
             TriggerClientEvent('QBCore:Notify', src, 'Vehículo editado correctamente', 'success')
             TriggerClientEvent('jgr_dealership:client:RefreshVehicles', -1)
@@ -98,24 +110,32 @@ end
 RegisterNetEvent('jgr_dealership:server:BuyVehicle', function(vehicleData, paymentType)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    local price = tonumber(vehicleData.price)
+    if not Player then return end
+    if type(vehicleData) ~= 'table' then return end
+    local price = tonumber(vehicleData.price) or 0
+    local model = tostring(vehicleData.model or '')
+    local vehName = tostring(vehicleData.name or model)
+    if price <= 0 or model == '' then
+        TriggerClientEvent('jgr_dealership:client:PurchaseFailed', src)
+        return
+    end
 
-    if not paymentType then paymentType = 'bank' end
+    if paymentType ~= 'bank' and paymentType ~= 'cash' then paymentType = 'bank' end
 
     if Player.Functions.RemoveMoney(paymentType, price, 'vehicle-bought-dealership') then
         local plate = GeneratePlate()
         MySQL.Async.insert('INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, garage, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
             Player.PlayerData.license,
             Player.PlayerData.citizenid,
-            vehicleData.model,
-            GetHashKey(vehicleData.model),
+            model,
+            GetHashKey(model),
             '{}',
             plate,
             'pillboxgarage', 
             0
         }, function(id)
-            TriggerClientEvent('jgr_dealership:client:VehicleBought', src, vehicleData.model, plate)
-            TriggerClientEvent('QBCore:Notify', src, 'Has comprado un ' .. vehicleData.name .. ' por $' .. price .. ' con ' .. (paymentType == 'bank' and 'tarjeta' or 'efectivo'), 'success')
+            TriggerClientEvent('jgr_dealership:client:VehicleBought', src, model, plate)
+            TriggerClientEvent('QBCore:Notify', src, 'Has comprado un ' .. vehName .. ' por $' .. price .. ' con ' .. (paymentType == 'bank' and 'tarjeta' or 'efectivo'), 'success')
         end)
     else
         TriggerClientEvent('QBCore:Notify', src, 'No tienes suficiente dinero en tu ' .. (paymentType == 'bank' and 'cuenta bancaria' or 'cartera'), 'error')
