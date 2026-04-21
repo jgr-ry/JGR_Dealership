@@ -1,259 +1,325 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JGR Dealership | Premium Motors</title>
-    <!-- Modern Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <!-- Font Awesome -->
+    <title>JGR Dealership</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- Notification System -->
-    <div id="dynamic-island" class="dynamic-island hidden">
-        <div class="di-content">
-            <i id="di-icon" class="fas fa-bell"></i>
+    <div id="dynamic-island" class="toast-banner hidden" role="status">
+        <div class="toast-banner__inner">
+            <i id="di-icon" class="fas fa-bell" aria-hidden="true"></i>
             <span id="di-text">Notificación</span>
         </div>
     </div>
 
-    <!-- Main Dealership UI -->
-    <main id="dealership-ui" class="overlay hidden">
+    <main id="dealership-ui" class="dealer-root hidden">
 
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar glass">
-            <div class="brand">
-                <div class="logo-box">
+        <aside class="dealer-sidebar" aria-label="Navegación del concesionario">
+            <header class="dealer-sidebar__brand">
+                <div class="dealer-sidebar__mark" aria-hidden="true">
                     <i class="fas fa-car-side"></i>
                 </div>
                 <div class="brand-text">
                     <h1>JGR MOTORS</h1>
-                    <p>PREMIUM DEALER</p>
+                    <p>Premium dealer</p>
                 </div>
-            </div>
+            </header>
 
-            <nav class="categories">
-                <div class="nav-label">Categorías</div>
-                <ul id="categories-list">
-                    <li class="active" data-cat="all">
-                        <i class="fas fa-th-large"></i> <span>Todos</span>
+            <nav class="dealer-nav" aria-label="Categorías">
+                <p class="dealer-nav__label">Categorías</p>
+                <ul id="categories-list" class="dealer-nav__list">
+                    <li class="is-active" data-cat="all">
+                        <i class="fas fa-th-large" aria-hidden="true"></i>
+                        <span>Todos</span>
                     </li>
                     <li data-cat="compactos">
-                        <i class="fas fa-cubes"></i> <span>Compactos</span>
+                        <i class="fas fa-cubes" aria-hidden="true"></i>
+                        <span>Compactos</span>
                     </li>
                     <li data-cat="sedanes">
-                        <i class="fas fa-car"></i> <span>Sedanes</span>
+                        <i class="fas fa-car" aria-hidden="true"></i>
+                        <span>Sedanes</span>
                     </li>
                     <li data-cat="suvs">
-                        <i class="fas fa-truck-pickup"></i> <span>SUVs</span>
+                        <i class="fas fa-truck-pickup" aria-hidden="true"></i>
+                        <span>SUVs</span>
                     </li>
                     <li data-cat="coupes">
-                        <i class="fas fa-car-side"></i> <span>Coupés</span>
+                        <i class="fas fa-car-side" aria-hidden="true"></i>
+                        <span>Coupés</span>
                     </li>
                     <li data-cat="electricos">
-                        <i class="fas fa-charging-station"></i> <span>Eléctricos</span>
+                        <i class="fas fa-charging-station" aria-hidden="true"></i>
+                        <span>Eléctricos</span>
                     </li>
                     <li data-cat="musclecars">
-                        <i class="fas fa-fire"></i> <span>Muscle cars</span>
+                        <i class="fas fa-fire" aria-hidden="true"></i>
+                        <span>Muscle cars</span>
                     </li>
                     <li data-cat="deportivos_clasicos">
-                        <i class="fas fa-flag-checkered"></i> <span>Deportivos clásicos</span>
+                        <i class="fas fa-flag-checkered" aria-hidden="true"></i>
+                        <span>Deportivos clásicos</span>
                     </li>
                     <li data-cat="deportivos">
-                        <i class="fas fa-tachometer-alt"></i> <span>Deportivos</span>
+                        <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                        <span>Deportivos</span>
                     </li>
                     <li data-cat="superdeportivos">
-                        <i class="fas fa-bolt"></i> <span>Superdeportivos</span>
+                        <i class="fas fa-bolt" aria-hidden="true"></i>
+                        <span>Superdeportivos</span>
                     </li>
                     <li data-cat="motos">
-                        <i class="fas fa-motorcycle"></i> <span>Motos</span>
+                        <i class="fas fa-motorcycle" aria-hidden="true"></i>
+                        <span>Motos</span>
                     </li>
                 </ul>
             </nav>
 
-            <footer class="sidebar-footer">
-                <button class="close-btn" onclick="Utils.closeUI()">
-                    <i class="fas fa-sign-out-alt"></i> <span>Salir</span>
+            <footer class="dealer-sidebar__foot">
+                <button type="button" class="btn btn--leave" onclick="Utils.closeUI()">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    <span>Salir</span>
                 </button>
             </footer>
         </aside>
 
-        <!-- Main Display Content -->
-        <section class="main-content">
+        <div class="dealer-workspace">
 
-            <!-- Catalog View -->
-            <div id="catalog-view" class="view-panel">
-                <header class="content-header">
-                    <div class="header-info">
-                        <h2 id="current-cat-name">Catálogo Completo</h2>
-                        <p id="total-vehicles">Mostrando los modelos más exclusivos</p>
+            <div id="catalog-view" class="dealer-view">
+                <header class="dealer-catalog-head">
+                    <div class="dealer-catalog-head__titles">
+                        <h2 id="current-cat-name">Catálogo completo</h2>
+                        <p id="total-vehicles" class="header-sub">Mostrando los modelos más exclusivos</p>
+                    </div>
+
+                    <div class="dealer-toolbar card card--raised">
+                        <div class="dealer-balances" id="balance-strip" aria-live="polite">
+                            <div class="pill pill--cash" title="Efectivo">
+                                <i class="fas fa-wallet" aria-hidden="true"></i>
+                                <span id="bal-cash">—</span>
+                            </div>
+                            <div class="pill pill--bank" title="Banco">
+                                <i class="fas fa-building-columns" aria-hidden="true"></i>
+                                <span id="bal-bank">—</span>
+                            </div>
+                            <button type="button" class="btn-icon" id="btn-refresh-bal" title="Actualizar saldos" aria-label="Actualizar saldos">
+                                <i class="fas fa-rotate" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div class="dealer-toolbar__row">
+                            <label class="field field--search">
+                                <i class="fas fa-search" aria-hidden="true"></i>
+                                <input type="search" id="vehicle-search" autocomplete="off" placeholder="Buscar por nombre o modelo…">
+                            </label>
+                            <div class="sort-dropdown" id="vehicle-sort-root">
+                                <button type="button" class="sort-trigger" id="sort-trigger"
+                                    aria-haspopup="listbox" aria-expanded="false" aria-label="Ordenar lista">
+                                    <span id="sort-trigger-text">Orden: predeterminado</span>
+                                    <i class="fas fa-chevron-down sort-chev" aria-hidden="true"></i>
+                                </button>
+                                <div class="sort-menu hidden" id="sort-menu" role="listbox" aria-labelledby="sort-trigger">
+                                    <button type="button" class="sort-option is-active" data-value="default" role="option">
+                                        <span class="sort-option-label" data-sort-key="sort_default"></span>
+                                        <i class="fas fa-check sort-check" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="sort-option" data-value="price-asc" role="option">
+                                        <span class="sort-option-label" data-sort-key="sort_price_asc"></span>
+                                        <i class="fas fa-check sort-check" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="sort-option" data-value="price-desc" role="option">
+                                        <span class="sort-option-label" data-sort-key="sort_price_desc"></span>
+                                        <i class="fas fa-check sort-check" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="sort-option" data-value="name-asc" role="option">
+                                        <span class="sort-option-label" data-sort-key="sort_name"></span>
+                                        <i class="fas fa-check sort-check" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </header>
 
-                <div class="grid-container">
-                    <div id="vehicles-container" class="vehicle-grid">
-                        <!-- Cards injected here -->
-                    </div>
+                <div class="dealer-scroll">
+                    <div id="vehicles-container" class="vehicle-grid"></div>
                 </div>
             </div>
 
-            <!-- Preview View (Selected Vehicle) -->
-            <div id="preview-panel" class="view-panel hidden">
-                <div class="preview-layout">
-
-                    <div class="preview-header">
-                        <div class="header-left">
-                            <button class="back-link" onclick="Dealership.backToCatalog()">
-                                <i class="fas fa-chevron-left"></i> Volver al catálogo
+            <div id="preview-panel" class="dealer-view dealer-view--detail hidden">
+                <div class="dealer-detail">
+                    <header class="dealer-detail__head">
+                        <div class="dealer-detail__intro">
+                            <button type="button" class="link-back" onclick="Dealership.backToCatalog()">
+                                <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                                Volver al catálogo
                             </button>
                             <div class="vehicle-titles">
+                                <div class="preview-badges">
+                                    <span class="badge badge--cat" id="preview-cat-badge">—</span>
+                                    <span class="badge badge--code" id="preview-model-code">model</span>
+                                </div>
                                 <h1 id="preview-name">Vehicle Name</h1>
-                                <p class="stock-info">DISPONIBLE EN STOCK</p>
+                                <p class="stock-info" id="preview-stock-msg">DISPONIBLE EN STOCK</p>
                             </div>
                         </div>
-                        <div class="header-right">
-                            <div class="preview-price">
-                                <span id="preview-price">$0</span>
-                            </div>
+                        <div class="dealer-detail__price card card--price">
+                            <span id="preview-price">$0</span>
                         </div>
-                    </div>
+                    </header>
 
-                    <!-- Vehicle Stats Section -->
                     <div class="stats-wrapper">
-                        <div class="vehicle-stats glass">
+                        <div class="vehicle-stats card">
                             <div class="stat-item">
                                 <div class="stat-header">
-                                    <span class="stat-label">VELOCIDAD MÁXIMA</span>
+                                    <span class="stat-label" data-i18n="stat_speed">VELOCIDAD MÁXIMA</span>
+                                    <span class="stat-val" id="stat-speed-pct">—</span>
                                 </div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 85%"></div>
+                                    <div class="progress-fill" id="stat-speed-bar" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-header">
-                                    <span class="stat-label">ACELERACIÓN</span>
+                                    <span class="stat-label" data-i18n="stat_accel">ACELERACIÓN</span>
+                                    <span class="stat-val" id="stat-accel-pct">—</span>
                                 </div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 92%"></div>
+                                    <div class="progress-fill" id="stat-accel-bar" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-header">
-                                    <span class="stat-label">FRENADO</span>
+                                    <span class="stat-label" data-i18n="stat_brake">FRENADO</span>
+                                    <span class="stat-val" id="stat-brake-pct">—</span>
                                 </div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 78%"></div>
+                                    <div class="progress-fill" id="stat-brake-bar" style="width: 0%"></div>
                                 </div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-header">
-                                    <span class="stat-label">MANEJO</span>
+                                    <span class="stat-label" data-i18n="stat_handling">MANEJO</span>
+                                    <span class="stat-val" id="stat-handling-pct">—</span>
                                 </div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 80%"></div>
+                                    <div class="progress-fill" id="stat-handling-bar" style="width: 0%"></div>
                                 </div>
                             </div>
+                            <p class="stats-disclaimer" id="stats-disclaimer"></p>
                         </div>
                     </div>
 
-                    <!-- Configuration & Actions -->
-                    <div class="action-footer">
-                        <div class="footer-group glass">
-                            <div class="config-section">
-                                <div class="config-label">PERSONALIZACIÓN</div>
+                    <footer class="dealer-detail__actions">
+                        <div class="detail-tools card">
+                            <div class="config-block">
+                                <span class="config-label">Color de vista previa</span>
                                 <div class="color-picker" id="color-picker-container">
-                                    <div class="c-dot" style="background: #ffffff;" onclick="Dealership.changeColor(0)">
-                                    </div>
-                                    <div class="c-dot" style="background: #000000;"
-                                        onclick="Dealership.changeColor(12)"></div>
-                                    <div class="c-dot" style="background: #ff3b30;"
-                                        onclick="Dealership.changeColor(27)"></div>
-                                    <div class="c-dot" style="background: #007aff;"
-                                        onclick="Dealership.changeColor(64)"></div>
-                                    <div class="c-dot" style="background: #ffcc00;"
-                                        onclick="Dealership.changeColor(88)"></div>
-                                    <div class="c-dot" style="background: #8e8e93;"
-                                        onclick="Dealership.changeColor(13)"></div>
+                                    <button type="button" class="c-dot" style="background:#f5f5f7;" onclick="Dealership.changeColorRgb(245,245,247)" title="Blanco" aria-label="Blanco"></button>
+                                    <button type="button" class="c-dot" style="background:#1a1a1e;" onclick="Dealership.changeColorRgb(26,26,30)" title="Negro" aria-label="Negro"></button>
+                                    <button type="button" class="c-dot" style="background:#e63946;" onclick="Dealership.changeColorRgb(230,57,70)" title="Rojo" aria-label="Rojo"></button>
+                                    <button type="button" class="c-dot" style="background:#2a9d8f;" onclick="Dealership.changeColorRgb(42,157,143)" title="Verde" aria-label="Verde"></button>
+                                    <button type="button" class="c-dot" style="background:#457b9d;" onclick="Dealership.changeColorRgb(69,123,157)" title="Azul" aria-label="Azul"></button>
+                                    <button type="button" class="c-dot" style="background:#f4a261;" onclick="Dealership.changeColorRgb(244,162,97)" title="Naranja" aria-label="Naranja"></button>
+                                    <button type="button" class="c-dot" style="background:#9b59b6;" onclick="Dealership.changeColorRgb(155,89,182)" title="Morado" aria-label="Morado"></button>
+                                    <button type="button" class="c-dot" style="background:#ffd60a;" onclick="Dealership.changeColorRgb(255,214,10)" title="Amarillo" aria-label="Amarillo"></button>
                                 </div>
                             </div>
-
-                            <div class="v-divider"></div>
-
+                            <div class="detail-tools__divider" aria-hidden="true"></div>
                             <div class="camera-controls">
-                                <button class="cam-btn" onmousedown="Dealership.rotate('left')"><i
-                                        class="fas fa-undo"></i></button>
-                                <button class="cam-btn" onmousedown="Dealership.rotate('right')"><i
-                                        class="fas fa-redo"></i></button>
+                                <button type="button" class="btn-icon btn-icon--lg" title="Luces" onclick="Dealership.toggleLights()" aria-label="Luces">
+                                    <i class="fas fa-lightbulb" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="btn-icon btn-icon--lg" onmousedown="Dealership.rotate('left')" aria-label="Girar izquierda">
+                                    <i class="fas fa-undo" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="btn-icon btn-icon--lg" onmousedown="Dealership.rotate('right')" aria-label="Girar derecha">
+                                    <i class="fas fa-redo" aria-hidden="true"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <div class="buy-section">
-                            <button class="buy-btn" id="main-buy-btn" onclick="Dealership.showPaymentOptions()">
-                                PROCEDER AL PAGO <i class="fas fa-arrow-right"></i>
-                            </button>
+                        <div class="finance-hint card card--muted" id="finance-hint">
+                            <div class="finance-row">
+                                <span class="finance-label" id="finance-label">Financiación estimada</span>
+                                <span class="finance-val" id="finance-monthly">—</span>
+                            </div>
+                            <p class="finance-note" id="finance-note"></p>
+                        </div>
 
-                            <div id="payment-options" class="payment-modal hidden">
-                                <h3>MÉTODO DE PAGO</h3>
+                        <div class="buy-block">
+                            <div class="buy-row">
+                                <button type="button" class="btn btn--ghost hidden" id="btn-test-drive" onclick="Dealership.startTestDrive()">
+                                    <i class="fas fa-road" aria-hidden="true"></i>
+                                    <span id="test-drive-label">Prueba de manejo</span>
+                                </button>
+                                <button type="button" class="btn btn--primary" id="main-buy-btn" onclick="Dealership.showPaymentOptions()">
+                                    <span id="buy-btn-label">Proceder al pago</span>
+                                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <div id="payment-options" class="payment-sheet hidden">
+                                <h3 id="payment-title">Método de pago</h3>
                                 <div class="payment-grid">
-                                    <button class="pay-opt cash" onclick="Dealership.buyCurrent('cash')">
-                                        <i class="fas fa-wallet"></i>
-                                        <span>EFECTIVO</span>
+                                    <button type="button" class="pay-card" onclick="Dealership.buyCurrent('cash')">
+                                        <i class="fas fa-wallet" aria-hidden="true"></i>
+                                        <span id="pay-cash-label">Efectivo</span>
                                     </button>
-                                    <button class="pay-opt bank" onclick="Dealership.buyCurrent('bank')">
-                                        <i class="fas fa-university"></i>
-                                        <span>BANCO</span>
+                                    <button type="button" class="pay-card" onclick="Dealership.buyCurrent('bank')">
+                                        <i class="fas fa-university" aria-hidden="true"></i>
+                                        <span id="pay-bank-label">Banco</span>
                                     </button>
                                 </div>
-                                <button class="cancel-payment"
-                                    onclick="Dealership.hidePaymentOptions()">CANCELAR</button>
+                                <button type="button" class="link-cancel" onclick="Dealership.hidePaymentOptions()" id="pay-cancel-label">Cancelar</button>
                             </div>
                         </div>
-                    </div>
+                    </footer>
                 </div>
             </div>
 
-        </section>
+            <p class="kbd-hint" id="esc-hint"><kbd>ESC</kbd> <span id="esc-hint-text">Cerrar</span></p>
+        </div>
     </main>
 
-    <!-- Staff Panel UI (Kept separate/functional) -->
-    <div id="staff-ui" class="staff-overlay hidden">
-        <div class="staff-panel">
-            <div class="staff-header">
-                <div class="staff-brand">
-                    <i class="fas fa-cog"></i>
-                    <span>ADMINISTRACIÓN</span>
+    <div id="staff-ui" class="staff-shell hidden">
+        <div class="staff-panel card card--modal">
+            <header class="staff-head">
+                <div class="staff-head__title">
+                    <i class="fas fa-cog" aria-hidden="true"></i>
+                    <span>Administración</span>
                 </div>
-                <button class="close-btn-round" onclick="Utils.closeUI()"><i class="fas fa-times"></i></button>
-            </div>
+                <button type="button" class="btn-icon" onclick="Utils.closeUI()" aria-label="Cerrar">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </header>
 
-            <div class="staff-content">
+            <div class="staff-body">
                 <div class="staff-form">
-                    <h3>GESTIÓN DE VEHÍCULO</h3>
+                    <h3 class="staff-form__title">Vehículo en catálogo</h3>
                     <input type="hidden" id="staff-id" value="">
 
-                    <div class="input-group">
-                        <label>Modelo (Spawn Code)</label>
-                        <input type="text" id="staff-model" placeholder="ej. t20">
+                    <div class="field">
+                        <label for="staff-model">Modelo (spawn)</label>
+                        <input type="text" id="staff-model" placeholder="ej. t20" autocomplete="off">
                     </div>
-
-                    <div class="input-group">
-                        <label>Nombre Comercial</label>
-                        <input type="text" id="staff-name" placeholder="ej. Progen T20">
+                    <div class="field">
+                        <label for="staff-name">Nombre comercial</label>
+                        <input type="text" id="staff-name" placeholder="ej. Progen T20" autocomplete="off">
                     </div>
-
-                    <div class="input-group">
-                        <label>Precio Unitario ($)</label>
-                        <input type="number" id="staff-price" placeholder="ej. 2200000">
+                    <div class="field">
+                        <label for="staff-price">Precio ($)</label>
+                        <input type="number" id="staff-price" placeholder="ej. 2200000" min="0">
                     </div>
-
-                    <div class="input-group">
-                        <label>Categoría</label>
+                    <div class="field">
+                        <label for="staff-category">Categoría</label>
                         <select id="staff-category">
                             <option value="compactos">Compactos</option>
                             <option value="sedanes">Sedanes</option>
@@ -268,36 +334,41 @@
                         </select>
                     </div>
 
-                    <div class="staff-actions">
-                        <button class="btn-primary" onclick="Staff.save()"><i class="fas fa-save"></i> GUARDAR</button>
-                        <button class="btn-secondary" onclick="Staff.clearForm()"><i class="fas fa-trash-alt"></i>
-                            LIMPIAR</button>
+                    <div class="staff-form__actions">
+                        <button type="button" class="btn btn--primary" onclick="Staff.save()">
+                            <i class="fas fa-save" aria-hidden="true"></i> Guardar
+                        </button>
+                        <button type="button" class="btn btn--muted" onclick="Staff.clearForm()">
+                            <i class="fas fa-trash-alt" aria-hidden="true"></i> Limpiar
+                        </button>
                     </div>
                 </div>
 
-                <div class="staff-list-container">
-                    <h3>LISTA DE VEHÍCULOS</h3>
-                    <div id="staff-vehicles-list" class="staff-list">
-                        <!-- Rows injected here -->
+                <div class="staff-list-wrap">
+                    <div class="staff-list-head">
+                        <h3 class="staff-list-head__title">Listado</h3>
+                        <label class="field field--search field--compact">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="staff-search" placeholder="Filtrar…" autocomplete="off">
+                        </label>
                     </div>
+                    <div id="staff-vehicles-list" class="staff-list"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Confirmación NUI (nunca usar window.confirm en FiveM: rompe el foco del ratón) -->
-        <div id="staff-delete-modal" class="staff-modal-overlay hidden" role="dialog" aria-modal="true">
-            <div class="staff-modal-box">
-                <h4>Eliminar vehículo</h4>
-                <p id="staff-delete-label">¿Eliminar este vehículo del catálogo?</p>
-                <div class="staff-modal-actions">
-                    <button type="button" class="btn-secondary" id="staff-delete-cancel">Cancelar</button>
-                    <button type="button" class="btn-danger-fill" id="staff-delete-confirm">Eliminar</button>
+        <div id="staff-delete-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+            <div class="modal card">
+                <h4 class="modal__title">Eliminar vehículo</h4>
+                <p class="modal__text" id="staff-delete-label">¿Eliminar este vehículo del catálogo?</p>
+                <div class="modal__actions">
+                    <button type="button" class="btn btn--muted" id="staff-delete-cancel">Cancelar</button>
+                    <button type="button" class="btn btn--danger" id="staff-delete-confirm">Eliminar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="script.js"></script>
 </body>
 
