@@ -1,3 +1,9 @@
+if GetCurrentResourceName() ~= 'JGR_Dealership' then
+    print(('^1[JGR]^0 Renombra la carpeta del recurso a ^3JGR_Dealership^0 (actual: ^1%s^0).'):format(GetCurrentResourceName()))
+    StopResource(GetCurrentResourceName())
+    return
+end
+
 local QBCore = exports['qb-core']:GetCoreObject()
 
 -- Auto-import SQL en el inicio del script
