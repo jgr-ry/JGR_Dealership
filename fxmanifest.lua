@@ -26,7 +26,8 @@ files {
     'html/index.html',
     'html/style.css',
     'html/script.js',
-    'html/assets/*'
+    'html/assets/*',
+    'sql/jgr_dealership.sql',
 }
 
 escrow_ignore {

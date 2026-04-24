@@ -8,6 +8,20 @@ local QBCore = exports['qb-core']:GetCoreObject()
 
 -- Auto-import SQL en el inicio del script
 MySQL.ready(function()
+    local tbl = MySQL.Sync.fetchAll("SHOW TABLES LIKE 'jgr_dealership_vehicles'")
+    if not tbl or #tbl == 0 then
+        local sqlBundle = LoadResourceFile(GetCurrentResourceName(), 'sql/jgr_dealership.sql')
+        if sqlBundle and sqlBundle:match('%S') then
+            for stmt in sqlBundle:gmatch('([^;]+);') do
+                local q = stmt:gsub('^%s+', ''):gsub('%s+$', '')
+                if q ~= '' and not q:match('^%-%-') then
+                    pcall(function() MySQL.query.await(q) end)
+                end
+            end
+            print('^2[JGR_Dealership]^7 sql/jgr_dealership.sql importado.^0')
+        end
+    end
+
     MySQL.Async.execute([[
         CREATE TABLE IF NOT EXISTS `jgr_dealership_vehicles` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
