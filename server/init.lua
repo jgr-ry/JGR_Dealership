@@ -1,4 +1,4 @@
--- Nombre + versión (GitHub). La misma regla está en server/main.lua para evitar bypass quitando este archivo del manifest.
+-- Nombre del recurso + versión (GitHub). La misma regla está en server/main.lua (no quitar).
 local EXPECTED_RESOURCE_NAME = 'JGR_Dealership'
 
 do
