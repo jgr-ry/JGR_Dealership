@@ -1,5 +1,3 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-
 local uiOpen = false
 local staffPanelOpen = false
 local previewVehicle = nil
@@ -83,11 +81,11 @@ local function EndTestDrive(reason)
     end
 
     if reason == 'time' then
-        QBCore.Functions.Notify('Prueba de manejo finalizada.', 'primary', 4500)
+        Bridge.Notify('Prueba de manejo finalizada.', 'primary', 4500)
     elseif reason == 'cancel' then
-        QBCore.Functions.Notify('Has cancelado la prueba de manejo.', 'error', 3500)
+        Bridge.Notify('Has cancelado la prueba de manejo.', 'error', 3500)
     elseif reason == 'exit' then
-        QBCore.Functions.Notify('Te has bajado del vehículo. Vuelves al concesionario.', 'primary', 5000)
+        Bridge.Notify('Te has bajado del vehículo. Vuelves al concesionario.', 'primary', 5000)
     end
     testDriveEnding = false
 end
@@ -95,15 +93,15 @@ end
 local function StartTestDrive(model)
     if testDriveActive or testDriveEnding then return end
     if not Config.TestDrive or not Config.TestDrive.enabled then
-        QBCore.Functions.Notify('Las pruebas de manejo están desactivadas.', 'error')
+        Bridge.Notify('Las pruebas de manejo están desactivadas.', 'error')
         return
     end
     local td = Config.TestDrive
     if not td.spawn or not model or model == '' then return end
 
-    QBCore.Functions.TriggerCallback('jgr_dealership:server:TestDriveEnter', function(ok)
+    Bridge.TriggerCallback('jgr_dealership:server:TestDriveEnter', function(ok)
         if not ok then
-            QBCore.Functions.Notify('No se pudo iniciar la prueba (sesión). Inténtalo de nuevo.', 'error')
+            Bridge.Notify('No se pudo iniciar la prueba (sesión). Inténtalo de nuevo.', 'error')
             return
         end
 
@@ -115,7 +113,12 @@ local function StartTestDrive(model)
         DeletePreviewVehicle()
         DestroyPreviewCam()
 
-        QBCore.Functions.LoadModel(model)
+        if not Bridge.LoadModel(model) then
+            TriggerServerEvent('jgr_dealership:server:TestDriveExit')
+            testDriveInBucket = false
+            Bridge.Notify('No se pudo cargar el modelo del vehículo.', 'error')
+            return
+        end
         testDriveActive = true
         local hash = GetHashKey(model)
         testDriveVehicle = CreateVehicle(hash, td.spawn.x, td.spawn.y, td.spawn.z, td.spawn.w or 0.0, true, false)
@@ -126,10 +129,11 @@ local function StartTestDrive(model)
         SetVehicleFuelLevel(testDriveVehicle, 100.0)
         SetVehicleDirtLevel(testDriveVehicle, 0.0)
         TaskWarpPedIntoVehicle(PlayerPedId(), testDriveVehicle, -1)
-        TriggerEvent('vehiclekeys:client:SetOwner', QBCore.Functions.GetPlate(testDriveVehicle))
+        SetModelAsNoLongerNeeded(hash)
+        Bridge.GiveKeys(testDriveVehicle)
 
         local duration = tonumber(td.duration) or 90
-        QBCore.Functions.Notify(('Prueba aislada: %s s · [G] cancelar · Si te bajas, vuelves al concesionario.'):format(duration), 'success', 6500)
+        Bridge.Notify(('Prueba aislada: %s s · [G] cancelar · Si te bajas, vuelves al concesionario.'):format(duration), 'success', 6500)
 
         CreateThread(function()
             local endAt = GetGameTimer() + (duration * 1000)
@@ -162,12 +166,12 @@ local function StartTestDrive(model)
 end
 
 local function SendOpenDealershipPayload()
-    QBCore.Functions.TriggerCallback('jgr_dealership:server:GetVehicles', function(vehicles)
-        QBCore.Functions.TriggerCallback('jgr_dealership:server:GetBalances', function(balances)
+    Bridge.TriggerCallback('jgr_dealership:server:GetVehicles', function(vehicles)
+        Bridge.TriggerCallback('jgr_dealership:server:GetBalances', function(balances)
             SendNUIMessage({
                 action = 'openDealership',
-                vehicles = vehicles,
-                balances = balances,
+                vehicles = vehicles or {},
+                balances = balances or { cash = 0, bank = 0 },
                 ui = {
                     locale = (Config.UI and Config.UI.Locale) or 'es',
                     currency = (Config.UI and Config.UI.CurrencySymbol) or '$',
@@ -180,9 +184,9 @@ local function SendOpenDealershipPayload()
     end)
 end
 
-function OpenDealership()
+local function OpenDealership()
     if testDriveActive then
-        QBCore.Functions.Notify('Termina la prueba de manejo antes de abrir el menú.', 'error')
+        Bridge.Notify('Termina la prueba de manejo antes de abrir el menú.', 'error')
         return
     end
     uiOpen = true
@@ -191,7 +195,7 @@ function OpenDealership()
     SendOpenDealershipPayload()
 end
 
-function CloseDealership()
+local function CloseDealership()
     uiOpen = false
     staffPanelOpen = false
     SetNuiFocus(false, false)
@@ -225,22 +229,13 @@ CreateThread(function()
                 dealerPeds[key] = ped
                 pedToDealerKey[ped] = key
 
-                if Config.UseTarget and GetResourceState('qb-target') == 'started' then
+                if Config.UseTarget and Bridge.GetTargetSystem() then
                     local dealerKey = key
-                    exports['qb-target']:AddTargetEntity(ped, {
-                        options = {
-                            {
-                                icon = 'fas fa-car',
-                                label = 'Abrir concesionario',
-                                action = function()
-                                    if testDriveActive then return end
-                                    currentDealerKey = dealerKey
-                                    OpenDealership()
-                                end,
-                            }
-                        },
-                        distance = 2.5
-                    })
+                    Bridge.AddTargetEntity(ped, 'Abrir concesionario', 'fas fa-car', function()
+                        if testDriveActive then return end
+                        currentDealerKey = dealerKey
+                        OpenDealership()
+                    end)
                 end
             end
 
@@ -264,7 +259,7 @@ CreateThread(function()
         local pos = GetEntityCoords(ped)
         nearestDealerKey = nil
         local bestDist = 9999.0
-        local targetOk = Config.UseTarget and GetResourceState('qb-target') == 'started'
+        local targetOk = Config.UseTarget and Bridge.GetTargetSystem() ~= nil
 
         for key, dealer in pairs(Config.Dealerships or {}) do
             if dealer.coords then
@@ -273,9 +268,14 @@ CreateThread(function()
                     bestDist = dist
                     nearestDealerKey = key
                 end
-                if dist < 15.0 then
-                    wait = 0
-                    if dist < 1.6 and not targetOk then
+                if dist < 15.0 and not targetOk then
+                    -- Solo cada frame cuando estás al lado del vendedor; si no, 250 ms
+                    if dist < 3.0 then
+                        wait = 0
+                    elseif wait > 250 then
+                        wait = 250
+                    end
+                    if dist < 1.6 then
                         if not uiOpen and not staffPanelOpen and not testDriveActive then
                             local dPed = dealerPeds[key]
                             local tx, ty, tz = dealer.coords.x, dealer.coords.y, dealer.coords.z + 1.0
@@ -283,7 +283,7 @@ CreateThread(function()
                                 local pc = GetEntityCoords(dPed)
                                 tx, ty, tz = pc.x, pc.y, pc.z + 1.0
                             end
-                            QBCore.Functions.DrawText3D(tx, ty, tz, '[E] Abrir concesionario')
+                            Bridge.DrawText3D(tx, ty, tz, '[E] Abrir concesionario')
                             if IsControlJustPressed(0, 38) then
                                 currentDealerKey = key
                                 OpenDealership()
@@ -341,14 +341,20 @@ RegisterNUICallback('stopPreview', function(_, cb)
 end)
 
 RegisterNUICallback('previewVehicle', function(data, cb)
-    local model = data.model
-    if not model then cb({}) return end
-    QBCore.Functions.LoadModel(model)
+    local model = data and data.model
+    if type(model) ~= 'string' or model == '' then cb({}) return end
     DeletePreviewVehicle()
-    CreatePreviewCam()
 
     local dealer = select(1, GetDealerConfig(currentDealerKey))
     if not dealer or not dealer.PreviewSpawn then cb({}) return end
+
+    -- Antes QBCore.Functions.LoadModel esperaba para siempre si el modelo no existía
+    if not Bridge.LoadModel(model) then
+        Bridge.Notify('El modelo "' .. model .. '" no existe o no se pudo cargar.', 'error')
+        cb({})
+        return
+    end
+    CreatePreviewCam()
 
     previewVehicle = CreateVehicle(GetHashKey(model), dealer.PreviewSpawn.x, dealer.PreviewSpawn.y, dealer.PreviewSpawn.z, dealer.PreviewSpawn.w, false, false)
     SetEntityHeading(previewVehicle, dealer.PreviewSpawn.w)
@@ -357,6 +363,7 @@ RegisterNUICallback('previewVehicle', function(data, cb)
     FreezeEntityPosition(previewVehicle, true)
     SetEntityInvincible(previewVehicle, true)
     SetVehicleDoorsLocked(previewVehicle, 2)
+    SetModelAsNoLongerNeeded(GetHashKey(model))
 
     if previewCam then
         PointCamAtEntity(previewCam, previewVehicle, 0.0, 0.0, 0.0, true)
@@ -418,7 +425,7 @@ RegisterNUICallback('startTestDrive', function(data, cb)
 end)
 
 RegisterNUICallback('refreshBalances', function(_, cb)
-    QBCore.Functions.TriggerCallback('jgr_dealership:server:GetBalances', function(balances)
+    Bridge.TriggerCallback('jgr_dealership:server:GetBalances', function(balances)
         cb(balances or { cash = 0, bank = 0 })
     end)
 end)
@@ -432,13 +439,17 @@ RegisterNetEvent('jgr_dealership:client:VehicleBought', function(model, plate)
     local dealer = select(1, GetDealerConfig(currentDealerKey))
     if not dealer or not dealer.BuySpawn then return end
 
-    QBCore.Functions.LoadModel(model)
+    if not Bridge.LoadModel(model) then
+        Bridge.Notify('No se pudo cargar el modelo del vehículo comprado. Recógelo en tu garaje.', 'error')
+        return
+    end
     local vehicle = CreateVehicle(GetHashKey(model), dealer.BuySpawn.x, dealer.BuySpawn.y, dealer.BuySpawn.z, dealer.BuySpawn.w, true, false)
     SetVehicleNumberPlateText(vehicle, plate)
     SetEntityHeading(vehicle, dealer.BuySpawn.w)
     TaskWarpPedIntoVehicle(PlayerPedId(), vehicle, -1)
-    TriggerEvent('vehiclekeys:client:SetOwner', QBCore.Functions.GetPlate(vehicle))
-    SetVehicleEngineOn(vehicle, true, true)
+    Bridge.GiveKeys(vehicle)
+    SetVehicleEngineOn(vehicle, true, true, false)
+    SetModelAsNoLongerNeeded(GetHashKey(model))
 end)
 
 RegisterNetEvent('jgr_dealership:client:OpenStaffPanel', function()
@@ -447,10 +458,10 @@ RegisterNetEvent('jgr_dealership:client:OpenStaffPanel', function()
     DeletePreviewVehicle()
     DestroyPreviewCam()
     SetNuiFocus(true, true)
-    QBCore.Functions.TriggerCallback('jgr_dealership:server:GetVehicles', function(vehicles)
+    Bridge.TriggerCallback('jgr_dealership:server:GetVehicles', function(vehicles)
         SendNUIMessage({
             action = 'openStaffPanel',
-            vehicles = vehicles
+            vehicles = vehicles or {}
         })
     end)
 end)
@@ -473,13 +484,16 @@ RegisterNUICallback('staffDelete', function(data, cb)
 end)
 
 RegisterNetEvent('jgr_dealership:client:RefreshVehicles', function()
-    QBCore.Functions.TriggerCallback('jgr_dealership:server:GetVehicles', function(vehicles)
+    -- Solo si hay alguna interfaz abierta (antes todos los jugadores pedían el catálogo)
+    if not uiOpen and not staffPanelOpen then return end
+    Bridge.TriggerCallback('jgr_dealership:server:GetVehicles', function(vehicles)
+        if not vehicles then return end
         SendNUIMessage({
             action = 'refreshStaff',
             vehicles = vehicles
         })
         if uiOpen then
-            QBCore.Functions.TriggerCallback('jgr_dealership:server:GetBalances', function(balances)
+            Bridge.TriggerCallback('jgr_dealership:server:GetBalances', function(balances)
                 SendNUIMessage({
                     action = 'refreshDealership',
                     vehicles = vehicles,

@@ -1,23 +1,30 @@
 fx_version 'cerulean'
 game 'gta5'
+lua54 'yes'
 
+name 'JGR_Dealership'
 author 'JGR Studio'
-description 'JGR_Dealership'
-version '1.0.0'
+description 'JGR_Dealership - Concesionario con catálogo, prueba de manejo y panel de staff (QBCore · Qbox · ESX · Standalone)'
+version '1.1.0'
+jgr_version_key 'JGR_Dealership'
+repository 'https://github.com/jgr-ry/JGR_Dealership'
 
 shared_scripts {
-    '@qb-core/shared/locale.lua',
-    'config.lua'
+    'config.lua',
+    'bridge/shared.lua',
 }
 
 client_scripts {
-    'client/main.lua'
+    'bridge/client.lua',
+    'client/main.lua',
 }
 
 server_scripts {
-    'server/init.lua',
     '@oxmysql/lib/MySQL.lua',
-    'server/main.lua'
+    'server/init.lua',
+    'server/version_check.lua',
+    'bridge/server.lua',
+    'server/main.lua',
 }
 
 ui_page 'html/index.html'
@@ -27,11 +34,14 @@ files {
     'html/style.css',
     'html/script.js',
     'html/assets/*',
-    'sql/jgr_dealership.sql',
+}
+
+-- Solo oxmysql es obligatorio. El framework (qb-core, qbx_core, es_extended, ox_core)
+-- se detecta en tiempo de ejecución; no se declara como dependencia a propósito.
+dependencies {
+    'oxmysql',
 }
 
 escrow_ignore {
     'config.lua',
 }
-
-lua54 'yes'
